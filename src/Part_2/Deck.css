@@ -1,0 +1,27 @@
+.Deck {
+    text-align: center;
+  }
+  
+  .Deck-toggler {
+    padding: 15px;
+    background-color: black;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    margin: 0 10px;
+  }
+  
+  .Deck-toggler:hover {
+    cursor: pointer;
+    background-color: #444;
+  }
+  
+  .Deck-toggler:active,
+  .Deck-toggler:focus {
+    outline: none;
+  }
+  
+  .Deck-cardarea {
+    margin-top: 80px;
+  }
+  
