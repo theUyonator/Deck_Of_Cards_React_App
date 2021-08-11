@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect} from "react";
 import Card from "./Card";
 import axios from "axios";
 import "./Deck.css";
@@ -11,9 +11,9 @@ const BASE_URL = "http://deckofcardsapi.com/api/deck";
 
 function Deck() {
     const[deck, setDeck] = useState(null);
+    const [drawCard, setdrawCard] = useState(false);
     const[drawn, setDrawn] = useState([]);
-    const[autoDraw, setAutoDraw] = useState(false);
-    const timerRef = useRef(null);
+   
 
     // Load deck from API into state 
     useEffect(() => {
@@ -24,8 +24,7 @@ function Deck() {
         getData();
     }, [setDeck]);
 
-    // Draw one card evry second if autoDraw is true 
-
+    // Draw card everytime button is clicked
     useEffect(() => {
         // Draw a card from the API and add card to the drawn state 
         async function getCard(){
@@ -34,7 +33,6 @@ function Deck() {
                 let cardRes = await axios.get(`${BASE_URL}/${deck_id}/draw/`);
 
                 if (cardRes.data.remaining === 0 ){
-                    setAutoDraw(false);
                     throw new Error("no cards remaining in this deck!");
                 }
             
@@ -50,26 +48,21 @@ function Deck() {
                 }
             ]);
 
+            setdrawCard(draw => !draw);
+
             }catch(err){
                 alert(err);
             }
 };
-
-if (autoDraw && !timerRef.current){
-    timerRef.current = setInterval(async () =>{
-        await getCard();
-    }, 1000);
+if (drawCard){
+    getCard();
 }
 
-return () => {
-    clearInterval(timerRef.current);
-    timerRef.current = null;
-};
+}, [drawCard, deck]);
 
-}, [autoDraw, setAutoDraw, deck]);
 
-const toggleAutoDraw = () => {
-    setAutoDraw(auto => !auto);
+const handleDraw = () => {
+    setdrawCard(draw => !draw);
 };
 
 const cards = drawn.map(c => [
@@ -79,8 +72,8 @@ const cards = drawn.map(c => [
 return (
     <div className="Deck">
         {deck ? (
-            <button className="Deck-toggler" onClick={toggleAutoDraw}>
-                {autoDraw? "STOP" : "KEEP"} DRAWING!
+            <button className="Deck-toggler" onClick={handleDraw}>
+               GIMME A CARD!
             </button>
         ) : null}
         <div className="Deck-cardarea">{cards}</div>
